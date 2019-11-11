@@ -1,13 +1,8 @@
-package com.pxl.parkingApp
+package com.pxl.parkingApp.Activity
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -23,8 +18,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import androidx.core.content.ContextCompat
-import androidx.annotation.DrawableRes
 import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.firebase.auth.FirebaseUser
 import com.pxl.parkingApp.R
 
 
@@ -44,7 +39,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
 
         mParkingReference = FirebaseDatabase.getInstance().getReference("parkings")
 
@@ -84,7 +78,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
                     val icon: Boolean = parking!!.available_places > 0
 
-                    drawMarker(LatLng(parking!!.latitude, parking!!.longitude), icon)
+                    drawMarker(LatLng(parking.latitude, parking.longitude), icon)
                 }
             }
 
