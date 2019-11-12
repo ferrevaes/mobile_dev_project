@@ -9,4 +9,7 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">Login failed</string>
     <string name="create_account">Nog geen account? Klik hier</string>
+    <string name="title_activity_timer">Timer</string>
+    <string name="notification">Notficiation Title</string>
+    <string name="notification_channel_description">Notification Descp</string>
 </resources>
