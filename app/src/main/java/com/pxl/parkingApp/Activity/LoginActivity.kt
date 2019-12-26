@@ -15,7 +15,7 @@ import com.google.firebase.auth.FirebaseUser
 
 
 class LoginActivity : AppCompatActivity() {
-    private var mAuth: FirebaseAuth? = null
+    private lateinit var mAuth: FirebaseAuth
     private lateinit var button: Button
     private var currentUser: FirebaseUser? = null
 
@@ -23,7 +23,12 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+
         mAuth = FirebaseAuth.getInstance()
+
+        if(mAuth.currentUser != null){
+            startActivity(Intent(this, MapsActivity::class.java))
+        }
 
         button = findViewById<View>(R.id.button_login) as Button
 
@@ -45,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
         val password = passwordTxt.text.toString()
 
         if (!email.isEmpty() && !password.isEmpty()) {
-            this.mAuth?.signInWithEmailAndPassword(email, password)?.addOnCompleteListener ( this, OnCompleteListener<AuthResult> { task ->
+            this.mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener ( this, OnCompleteListener<AuthResult> { task ->
                 if (task.isSuccessful) {
                     startActivity(Intent(this, MapsActivity::class.java))
                     Toast.makeText(this, "Successfully Logged in", Toast.LENGTH_LONG).show()

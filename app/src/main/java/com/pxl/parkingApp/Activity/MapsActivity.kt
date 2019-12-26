@@ -30,7 +30,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var mParkingReference: DatabaseReference
     private lateinit var mAdapter: ParkingAdapter
-    private lateinit var mParkings: MutableList<Parking>
+    private lateinit var mParkings: ArrayList<Parking>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +40,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        mParkings = arrayListOf()
         mParkingReference = FirebaseDatabase.getInstance().getReference("parkings")
 
         recycler_parkings.layoutManager = LinearLayoutManager(this)
@@ -73,19 +74,25 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun loadParkings(){
         mParkingReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                for (parkingSnapshot in dataSnapshot.children) {
-                    val parking = parkingSnapshot.getValue(Parking::class.java)
-
-                    val icon: Boolean = parking!!.available_places > 0
-
-                    drawMarker(LatLng(parking.latitude, parking.longitude), icon)
-                }
+                fetchData(dataSnapshot)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
                 throw databaseError.toException()
             }
         })
+    }
+
+    fun fetchData(dataSnapshot: DataSnapshot){
+        for (parkingSnapshot in dataSnapshot.children) {
+            val parking = parkingSnapshot.getValue(Parking::class.java)
+
+            val icon: Boolean = parking!!.available_places > 0
+
+            drawMarker(LatLng(parking.latitude, parking.longitude), icon)
+
+            mParkings.add(parking);
+        }
     }
 
     private fun drawMarker(point: LatLng, icon: Boolean){
