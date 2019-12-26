@@ -19,14 +19,11 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.firebase.auth.FirebaseUser
 import com.pxl.parkingApp.R
+import android.widget.LinearLayout
+import android.widget.Toast
 
-
-
-
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
-
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback, ParkingAdapter.OnParkingListener {
     private lateinit var mMap: GoogleMap
     private lateinit var mParkingReference: DatabaseReference
     private lateinit var mAdapter: ParkingAdapter
@@ -43,12 +40,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mParkings = arrayListOf()
         mParkingReference = FirebaseDatabase.getInstance().getReference("parkings")
 
-        recycler_parkings.layoutManager = LinearLayoutManager(this)
+
+        val layoutManager = LinearLayoutManager(this)
+        layoutManager.orientation = LinearLayoutManager.VERTICAL
+        recycler_parkings.layoutManager = layoutManager
     }
 
     public override fun onStart() {
         super.onStart()
-        mAdapter = ParkingAdapter(this, mParkingReference)
+        mAdapter = ParkingAdapter(this, mParkingReference, this)
         recycler_parkings.adapter = mAdapter
     }
 
@@ -115,5 +115,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             draw(Canvas(bitmap))
             BitmapDescriptorFactory.fromBitmap(bitmap)
         }
+    }
+
+    override fun onParkingClick(position: Int) {
+        val parking = mParkings.get(position)
+        Toast.makeText(this, "You have clicked item ${parking.name}", Toast.LENGTH_SHORT).show()
     }
 }

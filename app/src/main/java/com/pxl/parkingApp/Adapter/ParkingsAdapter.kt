@@ -22,7 +22,7 @@ import org.w3c.dom.Comment
 
 
 //TODO: Remove all comments
-class ParkingAdapter(private val mContext: Context, private val mDatabaseReference: DatabaseReference)
+class ParkingAdapter(private val mContext: Context, private val mDatabaseReference: DatabaseReference, private val onParkingListener: OnParkingListener)
     : RecyclerView.Adapter<ParkingViewHolder>() {
     private val mChildEventListener: ChildEventListener?
 
@@ -108,7 +108,7 @@ class ParkingAdapter(private val mContext: Context, private val mDatabaseReferen
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ParkingViewHolder(
-        LayoutInflater.from(mContext).inflate(R.layout.parking_list_item, parent, false))
+        LayoutInflater.from(mContext).inflate(R.layout.parking_list_item, parent, false), onParkingListener)
 
     override fun onBindViewHolder(holder: ParkingViewHolder, position: Int) {
         val parking = mParkings[position]
@@ -130,4 +130,7 @@ class ParkingAdapter(private val mContext: Context, private val mDatabaseReferen
         }
     }
 
+    interface OnParkingListener {
+        fun onParkingClick(position: Int)
+    }
 }
