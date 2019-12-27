@@ -1,6 +1,8 @@
 package com.pxl.parkingApp.models;
 
-public class Parking {
+import java.io.Serializable;
+
+public class Parking implements Serializable {
     private String name;
     private int total_places;
     private int available_places;

@@ -1,39 +1,44 @@
-package com.pxl.parkingApp.Activity
+package com.pxl.parkingApp.Fragments.Home
+
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
+import androidx.fragment.app.FragmentManager
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
-
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.*
 import com.google.firebase.database.*
 import com.pxl.parkingApp.Adapter.ParkingAdapter
+
+import com.pxl.parkingApp.R
 import com.pxl.parkingApp.models.Parking
 import kotlinx.android.synthetic.main.activity_maps.*
-import com.google.android.gms.maps.model.*
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import androidx.core.content.ContextCompat
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.pxl.parkingApp.R
-import android.widget.LinearLayout
-import android.widget.Toast
+import kotlinx.android.synthetic.main.fragment_parking_list.view.*
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback, ParkingAdapter.OnParkingListener {
+class ParkingListFragment : Fragment(), OnMapReadyCallback, ParkingAdapter.OnParkingListener {
     private lateinit var mMap: GoogleMap
     private lateinit var mParkingReference: DatabaseReference
     private lateinit var mAdapter: ParkingAdapter
     private lateinit var mParkings: ArrayList<Parking>
+    private lateinit var binding: ViewDataBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_maps)
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        val mapFragment = supportFragmentManager
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = DataBindingUtil.inflate<ViewDataBinding>(inflater, R.layout.fragment_parking_list, container, false)
+        val mapFragment = childFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
@@ -41,18 +46,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, ParkingAdapter.OnP
         mParkingReference = FirebaseDatabase.getInstance().getReference("parkings")
 
 
-        val layoutManager = LinearLayoutManager(this)
+        val layoutManager = LinearLayoutManager(activity!!.applicationContext)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
-        recycler_parkings.layoutManager = layoutManager
+        binding.root.recycler_parkings.layoutManager = layoutManager
+
+        return binding.root
     }
 
-    public override fun onStart() {
+    override fun onStart() {
         super.onStart()
-        mAdapter = ParkingAdapter(this, mParkingReference, this)
-        recycler_parkings.adapter = mAdapter
+        mAdapter = ParkingAdapter(activity!!.applicationContext, mParkingReference, this)
+        binding.root.recycler_parkings.adapter = mAdapter
     }
 
-    public override fun onStop() {
+    override fun onStop() {
         super.onStop()
         mAdapter.cleanupListener()
     }
@@ -91,7 +98,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, ParkingAdapter.OnP
 
             drawMarker(LatLng(parking.latitude, parking.longitude), icon)
 
-            mParkings.add(parking);
+            mParkings.add(parking)
         }
     }
 
@@ -100,9 +107,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, ParkingAdapter.OnP
         options.position(point)
 
         if(icon){
-            options.icon(bitmapDescriptorFromVector(this, R.drawable.ic_marker_green_foreground))
+            options.icon(bitmapDescriptorFromVector(activity!!.applicationContext, R.drawable.ic_marker_green_foreground))
         }else{
-            options.icon(bitmapDescriptorFromVector(this, R.drawable.ic_marker_red_foreground))
+            options.icon(bitmapDescriptorFromVector(activity!!.applicationContext, R.drawable.ic_marker_red_foreground))
         }
 
         mMap.addMarker(options)
@@ -119,6 +126,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, ParkingAdapter.OnP
 
     override fun onParkingClick(position: Int) {
         val parking = mParkings.get(position)
-        Toast.makeText(this, "You have clicked item ${parking.name}", Toast.LENGTH_SHORT).show()
+        val bundle = Bundle()
+        bundle.putSerializable("parking", parking)
+        Navigation.findNavController(view!!).navigate(R.id.action_parkingListFragment_to_parkingDetailFragment, bundle)
     }
 }

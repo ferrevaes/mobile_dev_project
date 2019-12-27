@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/parkingListFragment">
+
+    <fragment
+        android:id="@+id/parkingListFragment"
+        android:name="com.pxl.parkingApp.Fragments.Home.ParkingListFragment"
+        android:label="Parkings"
+        tools:layout="@layout/fragment_parking_list">
+        <action
+            android:id="@+id/action_parkingListFragment_to_parkingDetailFragment"
+            app:destination="@id/parkingDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/parkingDetailFragment"
+        android:name="com.pxl.parkingApp.Fragments.Home.ParkingDetailFragment"
+        android:label="Parking Detail"
+        tools:layout="@layout/fragment_parking_detail" />
+</navigation>

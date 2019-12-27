@@ -27,7 +27,7 @@ class LoginActivity : AppCompatActivity() {
         mAuth = FirebaseAuth.getInstance()
 
         if(mAuth.currentUser != null){
-            startActivity(Intent(this, MapsActivity::class.java))
+            startActivity(Intent(this, HomeActivity::class.java))
         }
 
         button = findViewById<View>(R.id.button_login) as Button
@@ -52,7 +52,7 @@ class LoginActivity : AppCompatActivity() {
         if (!email.isEmpty() && !password.isEmpty()) {
             this.mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener ( this, OnCompleteListener<AuthResult> { task ->
                 if (task.isSuccessful) {
-                    startActivity(Intent(this, MapsActivity::class.java))
+                    startActivity(Intent(this, HomeActivity::class.java))
                     Toast.makeText(this, "Successfully Logged in", Toast.LENGTH_LONG).show()
                 } else {
                     Toast.makeText(this, "Error Logging in", Toast.LENGTH_SHORT).show()
